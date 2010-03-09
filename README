@@ -8,6 +8,8 @@ timed is a command-line time tracker.
 
   timed stop: stop tracking for the current project
 
+  timed restart: restart tracking for the last project
+
   timed summary: print a summary of hours for all projects
   
   timed help: print help
@@ -16,7 +18,7 @@ A human-readable log is stored in ~/.timed, and can be edited.
 
 Installation: easy_install timed, or:
 
-  $ git clone git://github.com/adeel/timed.git
+  $ git clone git://github.com/eugeneoden/timed.git
   $ cd timed
   $ python setup.py install
 
@@ -30,6 +32,7 @@ Tip: put the name of the active timed project in your bash prompt:
 
 Release notes:
 
+  0.12goden1: added restart command
   0.12: YAML turned out to be pretty slow, so it's been dropped.
   0.11: Using YAML to store the log.
   0.10: First release.

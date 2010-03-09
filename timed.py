@@ -94,6 +94,22 @@ def stop():
     logs[-1]['end'] = end
     save(logs)
 
+@cmdapp.cmd
+def restart():
+  "restart tracking for the last project"
+  
+  logs = read()
+  if not logs:
+    print "error: no active project"
+  else:
+    last = logs[-1]
+    project = last['project']
+    start = datetime.datetime.now()
+    logs.append({'project': project, 'start': start})
+    save(logs)
+    print "starting work on %s" % project
+    print "  at %s" % start.strftime(time_format)
+
 def elapsed_time(start, end=None):
   if not end:
     end = datetime.datetime.now()
