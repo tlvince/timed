@@ -10,6 +10,19 @@ timed is a command-line time tracker.
 
   timed restart: restart tracking for the last project
 
+  timed report: print a summary of hours by day, week, month, year
+
+    options:
+
+      --day   : summarize by day
+      --week  : summarize by week
+      --month : summarize by month
+      --year  : summarize by year
+
+      may use single dash (-) or double dash (--)
+
+      single-letter abbreviations also work (d, w, m, y)
+
   timed summary: print a summary of hours for all projects
   
   timed help: print help
@@ -32,6 +45,7 @@ Tip: put the name of the active timed project in your bash prompt:
 
 Release notes:
 
+  0.12goden2: added report command
   0.12goden1: added restart command
   0.12: YAML turned out to be pretty slow, so it's been dropped.
   0.11: Using YAML to store the log.

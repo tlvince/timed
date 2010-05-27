@@ -4,9 +4,10 @@ from setuptools import setup
 
 setup(
   name='timed',
-  version='0.12goden1',
+  version='0.12goden2',
   description="command-line time tracking",
   long_description=open('README').read(),
+  install_requires=['python-dateutil'],
   url='http://soundofemptiness.com/projects/timed',
   author='Adeel Ahmad Khan',
   author_email='adeel2@umbc.edu',

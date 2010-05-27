@@ -63,6 +63,113 @@ def summary():
   for project, min in summary.items():
     print "  - %s: %sh%sm" % (project, min/60, min - 60 * (min/60))
 
+def get_week(dt=None):
+    if dt == None:
+        dt = datetime.datetime.today()
+
+    dt = dt.replace(hour=0, minute=0, second=0, microsecond=0)
+
+    offset = datetime.timedelta(days=dt.isoweekday())
+
+    startOfWeek = dt - offset
+
+    offset = datetime.timedelta(days=6)
+
+    endOfWeek = startOfWeek + offset
+
+    key = "%s to %s" % (startOfWeek.strftime("%Y-%m-%d"),
+        endOfWeek.strftime("%Y-%m-%d"))
+
+    return key
+
+def get_day(dt=None):
+    if dt == None:
+        dt = datetime.datetime.today()
+
+    dt = dt.replace(hour=0, minute=0, second=0, microsecond=0)
+
+    return dt.strftime("%Y-%m-%d")
+
+def get_month(dt=None):
+    if dt == None:
+        dt = datetime.datetime.today()
+
+    dt = dt.replace(hour=0, minute=0, second=0, microsecond=0)
+
+    return dt.strftime("%Y-%m")
+
+def get_year(dt=None):
+    if dt == None:
+        dt = datetime.datetime.today()
+
+    dt = dt.replace(hour=0, minute=0, second=0, microsecond=0)
+
+    return dt.strftime("%Y")
+
+@cmdapp.cmd
+def report(d=None, day=None, w=None, week=None, m=None, month=None, y=None,
+    year=None):
+  "print a summary of hours by day, week, month, year"
+
+  # handle short or long options with - or --
+  if isinstance(d, str):
+    if d == '-d':
+      day = True
+    elif d == '-w':
+      week = True
+    elif d == '-m':
+      month = True
+    elif d == '-y':
+      year = True
+
+    d = None
+
+  get_key = None
+
+  if d or day:
+    get_key = get_day
+  elif w or week:
+    get_key = get_week
+  elif m or month:
+    get_key = get_month
+  elif y or year:
+    get_key = get_year
+  else:
+    global summary
+    summary()
+    return
+
+  logs = read()
+  periods = {}
+  for log in logs:
+    end = log.get('end', datetime.datetime.now())
+    start = log.get('start')
+
+    key = get_key(start)
+
+    summary = periods.setdefault(key, {})
+
+    if not summary.has_key(log['project']):
+      summary[log['project']] = 0
+    summary[log['project']] += (end - start).seconds / 60
+
+  first = False
+
+  for key, summary in sorted(periods.items()):
+    if not first:
+      print
+    else:
+      first = True
+
+    total = sum(summary.values())
+    hours = total/60
+    minutes = total - 60*(total/60)
+
+    print "%s - %sh%sm" % (key, hours, minutes)
+
+    for project, min in sorted(summary.items()):
+      print "    - %s: %sh%sm" % (project, min/60, min - 60 * (min/60))
+
 @cmdapp.cmd
 def start(project):
   "start tracking for <project>"
@@ -168,3 +275,5 @@ class SyntaxError(Exception):
 
 if __name__ == '__main__':
   main()
+
+# vim:set ts=2 sw=2 ai et:
