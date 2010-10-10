@@ -12,8 +12,8 @@ __author__ = 'Adeel Ahmad Khan, Tom Vincent'
 log_file = os.path.expanduser('~/.timed')
 time_format = '%H:%M on %d %b %Y'
 
-"""print current status"""
 def status(quiet=False):
+    """print current status"""
     logs = read()
     if logs:
         last = logs[-1]
@@ -37,8 +37,8 @@ def status(quiet=False):
             if not quiet:
                 help()
 
-"""print a summary of hours for all projects"""
 def summary():
+    """print a summary of hours for all projects"""
     logs = read()
     summary = {}
     for log in logs:
@@ -95,8 +95,8 @@ def get_year(dt=None):
 
     return dt.strftime("%Y")
 
-"""Print a summary of hours by day, week, month, year"""
 def report(quadrant=None):
+    """Print a summary of hours by day, week, month, year"""
 
     get_key = None
     if quadrant.day:
@@ -143,9 +143,9 @@ def report(quadrant=None):
     for project, min in sorted(summary.items()):
         print(("    - %s: %sh%sm" % (project, min/60, min - 60 * (min/60))))
 
-
-"""start tracking for <project>"""
 def start(project):
+    """start tracking for <project>"""
+
     logs = read()
     start = datetime.datetime.now()
     logs.append({'project': project, 'start': start})
@@ -154,7 +154,7 @@ def start(project):
     print(("    at %s" % start.strftime(time_format)))
 
 def stop():
-    "stop tracking for the current project"
+    """stop tracking for the current project"""
 
     logs = read()
     if not logs:
@@ -174,7 +174,7 @@ def stop():
 
 
 def restart():
-    "restart tracking for the last project"
+    """restart tracking for the last project"""
 
     logs = read()
     if not logs:
@@ -246,8 +246,8 @@ class SyntaxError(Exception):
     args = 'Syntax error in ~/.timed'
 
 
-"""Return a set of projects"""
 def getProjects():
+    """Return a set of projects"""
     logs = read()
     projects = set()
     for log in logs:
