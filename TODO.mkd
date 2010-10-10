@@ -1,0 +1,12 @@
+## Code quality
+
+* Organise project structure
+* Expand on function comments
+* Deprecate bespoke argument parsing module
+* Convert to Python3
+
+## Enhancements
+
+### Reports
+
+* Give projects a type
