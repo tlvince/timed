@@ -2,8 +2,6 @@
 
 * Organise project structure
 * Expand on function comments
-* Deprecate bespoke argument parsing module
-* Convert to Python3
 
 ## Enhancements
 
