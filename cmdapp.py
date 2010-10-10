@@ -27,7 +27,7 @@ def main(name, desc):
   try:
     handler(*args, **options)
   except Exception as e:
-    print e.args
+    print(e.args)
 
 def cmd(handler):
   handlers[handler.__name__] = handler
@@ -39,7 +39,7 @@ def default(handler):
 
 def help():
   subcmds = []
-  for name, handler in handlers.items():
+  for name, handler in list(handlers.items()):
     syntax = (program['name'] + ' ' + name).strip()
     usage = '  %s: %s' % (syntax, handler.__doc__)
     subcmds.append(usage)
@@ -50,4 +50,4 @@ def help():
 Usage:
 %s""" % (program['desc'], subcmds)
   
-  print doc
+  print(doc)
