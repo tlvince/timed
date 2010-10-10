@@ -4,24 +4,14 @@
 import sys
 import os.path
 import time, datetime
-import cmdapp
+
+import argparse
 
 __author__ = 'Adeel Ahmad Khan, Tom Vincent'
 
 log_file = os.path.expanduser('~/.timed')
 time_format = '%H:%M on %d %b %Y'
 
-def main():
-  if not os.path.exists(log_file):
-    open(log_file, 'w').close()
-
-  cmdapp.main(name=__name__, desc=__doc__)
-
-def help():
-  cmdapp.help()
-
-@cmdapp.cmd
-@cmdapp.default
 def status(quiet=False):
   "print current status"
 
@@ -47,7 +37,7 @@ def status(quiet=False):
     if not quiet:
       help()
 
-@cmdapp.cmd
+
 def summary():
   "print a summary of hours for all projects"
 
@@ -106,7 +96,7 @@ def get_year(dt=None):
 
     return dt.strftime("%Y")
 
-@cmdapp.cmd
+
 def report(d=None, day=None, w=None, week=None, m=None, month=None, y=None,
     year=None):
   "print a summary of hours by day, week, month, year"
@@ -170,7 +160,7 @@ def report(d=None, day=None, w=None, week=None, m=None, month=None, y=None,
     for project, min in sorted(summary.items()):
       print(("    - %s: %sh%sm" % (project, min/60, min - 60 * (min/60))))
 
-@cmdapp.cmd
+
 def start(project):
   "start tracking for <project>"
 
@@ -181,7 +171,7 @@ def start(project):
   print(("starting work on %s" % project))
   print(("  at %s" % start.strftime(time_format)))
 
-@cmdapp.cmd
+
 def stop():
   "stop tracking for the current project"
 
@@ -201,7 +191,7 @@ def stop():
     logs[-1]['end'] = end
     save(logs)
 
-@cmdapp.cmd
+
 def restart():
   "restart tracking for the last project"
 
@@ -272,6 +262,48 @@ def save(logs):
 
 class SyntaxError(Exception):
   args = 'Syntax error in ~/.timed'
+
+def parseArgs():
+    parser = argparse.ArgumentParser()
+    subparsers = parser.add_subparsers(title="sub-commands")
+
+    status = subparsers.add_parser("status",
+        help="print current status")
+    status.set_defaults(func=status)
+
+    stop = subparsers.add_parser("stop",
+        help="stop tracking for the current project")
+    stop.set_defaults(func=stop)
+
+    summary = subparsers.add_parser("summary",
+        help="print a summary of hours for all projects")
+    summary.set_defaults(func=summary)
+
+    start = subparsers.add_parser("start",
+        help="start tracking for <project>")
+    start.add_argument("project", help="the project name")
+    start.set_defaults(func=start)
+
+    report = subparsers.add_parser("report",
+        help="print a summary of hours by day, week, month, year",)
+    report.add_argument("-d", "--day", help="summary of hours by day")
+    report.add_argument("-w", "--week", help="summary of hours by week")
+    report.add_argument("-m", "--month", help="summary of hours by month")
+    report.add_argument("-y", "--year", help="summary of hours by year")
+    report.set_defaults(func=report)
+
+    restart = subparsers.add_parser("restart",
+        help="restart tracking for the last project")
+    restart.set_defaults(func=restart)
+
+    args = parser.parse_args()
+    args.func(args)
+
+def main():
+    if not os.path.exists(log_file):
+        open(log_file, 'w').close()
+
+    parseArgs()
 
 if __name__ == '__main__':
   main()
