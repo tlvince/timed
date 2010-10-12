@@ -6,13 +6,14 @@ import os.path
 import time, datetime
 
 import argparse
+from argparse import RawDescriptionHelpFormatter
 
 __author__ = 'Adeel Ahmad Khan, Tom Vincent'
 
 log_file = os.path.expanduser('~/.timed')
 time_format = '%H:%M on %d %b %Y'
 
-def status(quiet=False):
+def status(quiet):
     """print current status"""
     logs = read()
     if logs:
@@ -95,10 +96,9 @@ def get_year(dt=None):
 
     return dt.strftime("%Y")
 
-def report(quadrant=None):
+def report(get_key):
     """Print a summary of hours by day, week, month, year"""
 
-    get_key = None
     if quadrant.day:
         get_key = get_day
     elif quadrant.week:
@@ -107,10 +107,6 @@ def report(quadrant=None):
         get_key = get_month
     elif quadrant.year:
         get_key = get_year
-    else:
-        global summary
-        summary()
-        return
 
     logs = read()
     periods = {}
@@ -257,43 +253,87 @@ def getProjects():
         print(proj)
 
 def parseArgs():
-    parser = argparse.ArgumentParser()
+    """Parse the command-line arguments"""
+
+    desc = sys.argv[0] + ": a command-line time tracker\n\
+See '" + sys.argv[0] + " {sub-command} -h' for help on a specific sub-command."
+
+    parser = argparse.ArgumentParser(
+        formatter_class=RawDescriptionHelpFormatter,
+        description=desc
+    )
+    parser.add_argument("-v", "--version", action='version',
+        version=sys.argv[0] + " v2.0",
+        help="show version information and exit")
     subparsers = parser.add_subparsers(title="sub-commands")
 
-    parserStatus = subparsers.add_parser("status",
-        help="print current status")
-    parserStatus.set_defaults(func=status)
+    subStatus = subparsers.add_parser("status",
+        help="print current status"
+    )
+    subStatus.add_argument("-q", "--quiet",
+        action="store_true",
+        help="print only the currently active project"
+    )
+    subStatus.set_defaults(func=status)
 
-    parserStop = subparsers.add_parser("stop",
+    subStop = subparsers.add_parser("stop",
         help="stop tracking for the current project")
-    parserStop.set_defaults(func=stop)
+    subStop.set_defaults(func=stop)
 
-    parserSummary = subparsers.add_parser("summary",
-        help="print a summary of hours for all projects")
-    parserSummary.set_defaults(func=summary)
-
-    parserStart = subparsers.add_parser("start",
+    subStart = subparsers.add_parser("start",
         help="start tracking for <project>")
-    parserStart.add_argument("project", help="the project name")
-    parserStart.set_defaults(func=start)
+    subStart.add_argument("project", help="the project name")
+    subStart.set_defaults(func=start)
 
-    parserReport = subparsers.add_parser("report",
-        help="print a summary of hours by day, week, month, year",)
-    parserReport.add_argument("-d", "--day", help="summary of hours by day")
-    parserReport.add_argument("-w", "--week", help="summary of hours by week")
-    parserReport.add_argument("-m", "--month", help="summary of hours by month")
-    parserReport.add_argument("-y", "--year", help="summary of hours by year")
-    parserReport.add_argument("-p", "--projects", help="print unique projects")
-    parserReport.set_defaults(func=report)
+    subRestart = subparsers.add_parser("restart",
+        help="restart tracking for the last project"
+    )
+    subRestart.set_defaults(func=restart)
 
-    parserRestart = subparsers.add_parser("restart",
-        help="restart tracking for the last project")
-    parserRestart.set_defaults(func=restart)
+    subReport = subparsers.add_parser("report",
+        help="print various report types",)
+    subReport.add_argument("-d", "--day",
+        help="summary of hours by day. YYYY-MM-DD"
+    )
+    subReport.add_argument("-w", "--week",
+        help="summary of hours by week. XXX"
+    )
+    subReport.add_argument("-m", "--month",
+        help="summary of hours by month. YYYY-MM"
+    )
+    subReport.add_argument("-y", "--year",
+        help="summary of hours by year. YYYY"
+    )
+    subReport.add_argument("-p", "--projects",
+        nargs="?", const="all",
+        help="print unique projects"
+    )
+    subReport.add_argument("-s", "--summary",
+        nargs="?", const="all",
+        help="print a summary of hours for all projects"
+    )
+    subReport.set_defaults(func=report)
 
     args = parser.parse_args()
-    print(args)
-    args.func(args)
-
+    if args.func == status:
+        args.func(args.quiet)
+    elif args.func == start:
+        args.func(args.project)
+    elif args.func == report:
+        if args.day:
+            args.func(args.day)
+        elif args.week:
+            args.func(args.week)
+        elif args.month:
+            args.func(args.month)
+        elif args.year:
+            args.func(args.year)
+        elif args.projects:
+            getProjects()
+        else:
+            summary()
+    else:
+        args.func()
 
 def main():
     if not os.path.exists(log_file):
