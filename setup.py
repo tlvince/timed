@@ -19,11 +19,12 @@ setup(
     classifiers = [
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
-        'Development Status :: 4 - Beta',
+        'Development Status :: 2 - Pre-Alpha',
         'Environment :: Console',
         'License :: OSI Approved :: BSD License',
         'Natural Language :: English',
         'Operating System :: POSIX',
-        'Topic :: Utilities',
+        'Intended Audience :: Developers',
+        'Topic :: Office/Business :: Scheduling',
     ]
 )
