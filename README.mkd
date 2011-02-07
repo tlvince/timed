@@ -1,7 +1,8 @@
 timed
 =====
 
-`timed` is a command-line time tracker.
+`timed` is a command-line time tracker. This fork is a continuation of the
+[original project][1], reimagined in Python 3.
 
 Usage
 -----
@@ -41,7 +42,7 @@ Installation
 
 or:
 
-    $ git clone git://github.com/eugeneoden/timed.git
+    $ git clone git://github.com/tlvince/timed.git
     $ cd timed
     $ python setup.py install
 
@@ -71,3 +72,5 @@ Release notes
 * 0.12: YAML turned out to be pretty slow, so it's been dropped.
 * 0.11: Using YAML to store the log.
 * 0.10: First release.
+
+  [1]: http://adeel.github.com/timed/
