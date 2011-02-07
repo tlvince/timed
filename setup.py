@@ -8,7 +8,7 @@ from distutils.core import setup
 setup(
     name  =  'timed',
     version = '0.1.1',
-    scripts = ['timed'],
+    scripts = ['timed.py'],
     description = "command-line time tracking",
     long_description = open('README.mkd').read(),
     url = 'http://tlvince.github.com/timed',
