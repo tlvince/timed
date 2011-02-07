@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""timed: a command-line time tracker. Python3 port."""
+
+"""A command-line time tracker. Python 3 port."""
 
 import sys
 import os.path
