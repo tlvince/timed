@@ -20,7 +20,7 @@ Usage
 
 `timed report`: print a summary of hours by day, week, month, year
 
-    options:
+    report options:
 
     --day   : summarize by day
     --week  : summarize by week
