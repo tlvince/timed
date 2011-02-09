@@ -34,9 +34,9 @@ class Timed:
                 
                 if not quiet:
                     print("working on %s:" % project)
-                    print("  from    %s" % start.strftime(time_format))
-                    print("  to now, %s" % end.strftime(time_format))
-                    print("       => %s have elapsed" % elapsed_time(start, end))
+                    print("  from    %s" % start.strftime(self.time_format))
+                    print("  to now, %s" % end.strftime(self.time_format))
+                    print("       => %s have elapsed" % self.elapsed_time(start, end))
                 else:
                     print(project)
             else:
@@ -68,9 +68,9 @@ class Timed:
         logs = self.read()
         start = datetime.datetime.now()
         logs.append({'project': project, 'start': start})
-        save(logs)
+        self.save(logs)
         print("starting work on %s" % project)
-        print("  at %s" % start.strftime(time_format))
+        print("  at %s" % start.strftime(self.time_format))
 
     def stop(self):
         """Stop tracking for the current project."""
@@ -84,9 +84,9 @@ class Timed:
             start = last.get('start')
             end = datetime.datetime.now()
             print("worked on %s" % project)
-            print("  from    %s" % start.strftime(time_format))
-            print("  to now, %s" % end.strftime(time_format))
-            print("       => %s elapsed" % elapsed_time(start))
+            print("  from    %s" % start.strftime(self.time_format))
+            print("  to now, %s" % end.strftime(self.time_format))
+            print("       => %s elapsed" % self.elapsed_time(start))
             
             logs[-1]['end'] = end
             self.save(logs)
@@ -131,7 +131,22 @@ class Timed:
 
     def save(self, logs):
         """Save log file."""
-        file = open(log_file, 'w')
+        file = open(self.log_file, 'w')
+
+        def format(log):
+            if log.get('end'):
+                return '%s: %s - %s' % (log['project'],
+                    log['start'].strftime(self.time_format),
+                    log['end'].strftime(self.time_format))
+            else:
+                return '%s: %s - ' % (log['project'],
+                    log['start'].strftime(self.time_format))
+
+        dump = '\n'.join((format(log) for log in logs))
+
+        file.write(dump)
+        file.close()
+        
 
 class SyntaxError(Exception):
     """An error thrown if there's an unexpected line in the log."""
