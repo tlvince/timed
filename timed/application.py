@@ -44,20 +44,28 @@ def parseArguments(parser):
         sys.argv.append("status")
 
     args = parser.parse_args()
-    return args.func
+    return args
+
+def argparseValues(args):
+    """Return all values of an argparse Namespace, other than func.
+    
+    See: http://old.nabble.com/-issue11076--Iterable-argparse-Namespace-td30804514.html
+    XXX: This should not be necessary.
+    """
+    nonFunc = []
+    for k in vars(args):
+        if k != "func":
+            nonFunc.append(vars(args)[k])
+    return nonFunc
 
 def main():
     """Start execution of timed."""
-    log_file = os.path.expanduser('~/.timed')
+    log_file = os.path.join(os.path.expanduser("~"), ".timed")
     time_format = "%H:%M on %d %b %Y"
 
     args = parseArguments(buildArguments())
-
-    if not os.path.exists(log_file):
-        open(log_file, 'w').close()  
-
     timed = Timed(log_file, time_format)
-    args(timed)
+    args.func(timed, *argparseValues(args))
 
 if __name__ == "__main__":
     main()
