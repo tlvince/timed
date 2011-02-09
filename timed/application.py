@@ -3,31 +3,48 @@
 
 """Main logic and argument handling for timed."""
 
+import sys
 import os.path
 import argparse
 
+import timed.timed
+
 def buildArguments():
-    """Construct an argparse object."""
+    """Return an argparse object with the known arguments."""
     parser = argparse.ArgumentParser(description="A command-line time tracker.")
-    parser.add_argument("-v", "--version", action="version", version="0.13",
-        help="show version information and exit")
-    parser.add_argument("-q", "--quiet", action="store_true",
+    parser.add_argument("-v", "--version", action="version",
+        version="%(prog)s v0.13", help="show version information and exit")
+    subparser = parser.add_subparsers(title="sub-commands")
+
+    status = subparser.add_parser("status", help="print current status")
+    status.set_defaults(func=timed.timed.status)
+    status.add_argument("-q", "--quiet", action="store_true",
         help="print only the current active project")
 
-    subparser = parser.add_subparsers(title="sub-commands")
-    subparser.add_parser("status", help="print current status")
     start = subparser.add_parser("start", help="start tracking for [project]")
     start.add_argument("project", help="the project name")
-    subparser.add_parser("stop", help="stop tracking for the current project")
-    subparser.add_parser("summary",
+    start.set_defaults(func=timed.timed.start)
+
+    stop = subparser.add_parser("stop", help="stop tracking for the current project")
+    stop.set_defaults(func=timed.timed.stop)
+
+    summary = subparser.add_parser("summary",
         help="print a summary of hours for all projects")
+    summary.set_defaults(func=timed.timed.summary)
 
     return parser
 
 def parseArguments(parser):
     """Parse the command-line arguments."""
-    parsed = parser.parse_args()
-    return parsed
+
+    # XXX: argparse does not support optional subparsers
+    # See: http://bugs.python.org/issue9253
+    if len(sys.argv) == 1:
+        # Default to "status" if no arguments given
+        sys.argv.append("status")
+
+    args = parser.parse_args()
+    return args.func
 
 def main():
     """Start execution of timed."""
