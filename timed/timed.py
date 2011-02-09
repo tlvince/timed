@@ -6,7 +6,6 @@ __author__ = 'Adeel Ahmad Khan'
 import sys
 import os.path
 import time, datetime
-import cmdapp
 
 log_file = os.path.expanduser('~/.timed')
 time_format = '%H:%M on %d %b %Y'
@@ -14,14 +13,7 @@ time_format = '%H:%M on %d %b %Y'
 def main():
     if not os.path.exists(log_file):
         open(log_file, 'w').close()  
-    
-    cmdapp.main(name=__name__, desc=__doc__)
 
-def help():
-    cmdapp.help()
-
-@cmdapp.cmd
-@cmdapp.default
 def status(quiet=False):
     "print current status"
     
@@ -47,7 +39,6 @@ def status(quiet=False):
         if not quiet:
             help()
 
-@cmdapp.cmd
 def summary():
     "print a summary of hours for all projects"
     
@@ -63,7 +54,6 @@ def summary():
     for project, min in list(summary.items()):
         print("  - %s: %sh%sm" % (project, min/60, min - 60 * (min/60)))
 
-@cmdapp.cmd
 def start(project):
     "start tracking for <project>"
     
@@ -74,7 +64,6 @@ def start(project):
     print("starting work on %s" % project)
     print("  at %s" % start.strftime(time_format))
 
-@cmdapp.cmd
 def stop():
     "stop tracking for the current project"
     
@@ -133,14 +122,14 @@ def read():
 def save(logs):
     file = open(log_file, 'w')
     
-    def format(log):
-        if log.get('end'):
-            return '%s: %s - %s' % (log['project'],
-                log['start'].strftime(time_format),
-                log['end'].strftime(time_format))
-        else:
-            return '%s: %s - ' % (log['project'],
-                log['start'].strftime(time_format))
+def format(log):
+    if log.get('end'):
+        return '%s: %s - %s' % (log['project'],
+            log['start'].strftime(time_format),
+            log['end'].strftime(time_format))
+    else:
+        return '%s: %s - ' % (log['project'],
+            log['start'].strftime(time_format))
     
     dump = '\n'.join((format(log) for log in logs))
 
