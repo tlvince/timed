@@ -3,7 +3,7 @@
 
 """Launch script for timed."""
 
-from timed.timed import main
+from timed.application import main
 
 if __name__ == "__main__":
     main()

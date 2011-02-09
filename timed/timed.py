@@ -1,21 +1,17 @@
-"timed: a command-line time tracker"
+#!/usr/bin/env python3
 
-__name__ = 'timed'
-__author__ = 'Adeel Ahmad Khan'
+"""A command-line time tracker."""
+
+__author__ = 'Adeel Ahmad Khan\nTom Vincent'
 
 import sys
-import os.path
-import time, datetime
+import time
+import datetime
 
-log_file = os.path.expanduser('~/.timed')
 time_format = '%H:%M on %d %b %Y'
 
-def main():
-    if not os.path.exists(log_file):
-        open(log_file, 'w').close()  
-
 def status(quiet=False):
-    "print current status"
+    """Print current status."""
     
     logs = read()
     if logs:
@@ -40,7 +36,7 @@ def status(quiet=False):
             help()
 
 def summary():
-    "print a summary of hours for all projects"
+    """Print a summary of hours for all projects."""
     
     logs = read()
     summary = {}
@@ -55,7 +51,7 @@ def summary():
         print("  - %s: %sh%sm" % (project, min/60, min - 60 * (min/60)))
 
 def start(project):
-    "start tracking for <project>"
+    """Start tracking for <project>."""
     
     logs = read()
     start = datetime.datetime.now()
@@ -65,7 +61,7 @@ def start(project):
     print("  at %s" % start.strftime(time_format))
 
 def stop():
-    "stop tracking for the current project"
+    """Stop tracking for the current project."""
     
     logs = read()
     if not logs:
@@ -84,6 +80,7 @@ def stop():
         save(logs)
 
 def elapsed_time(start, end=None):
+    """Return the elapsed time spent working on the current project."""
     if not end:
         end = datetime.datetime.now()
     delta = (end - start).seconds
@@ -92,6 +89,7 @@ def elapsed_time(start, end=None):
     return '%sh%sm' % (hour, min)
 
 def read():
+    """Read log file."""
     logs = []
     with open(log_file) as data:
         try:
@@ -120,6 +118,7 @@ def read():
     return logs
 
 def save(logs):
+    """Save log file."""
     file = open(log_file, 'w')
     
 def format(log):
@@ -137,7 +136,5 @@ def format(log):
     file.close()
 
 class SyntaxError(Exception):
+    """An error thrown if there's an unexpected line in the log."""
     args = 'Syntax error in ~/.timed'
-
-if __name__ == '__main__':
-    main()
