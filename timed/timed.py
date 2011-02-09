@@ -34,12 +34,12 @@ def status(quiet=False):
             end = datetime.datetime.now()
             
             if not quiet:
-                print "working on %s:" % project
-                print "  from    %s" % start.strftime(time_format)
-                print "  to now, %s" % end.strftime(time_format)
-                print "       => %s have elapsed" % elapsed_time(start, end)
+                print("working on %s:" % project)
+                print("  from    %s" % start.strftime(time_format))
+                print("  to now, %s" % end.strftime(time_format))
+                print("       => %s have elapsed" % elapsed_time(start, end))
             else:
-                print project
+                print(project)
         else:
             if not quiet:
                 summary()
@@ -54,14 +54,14 @@ def summary():
     logs = read()
     summary = {}
     for log in logs:
-        if not summary.has_key(log['project']):
+        if log['project'] not in summary:
             summary[log['project']] = 0
         end = log.get('end', datetime.datetime.now())
         start = log.get('start')
         summary[log['project']] += (end - start).seconds / 60
     
-    for project, min in summary.items():
-        print "  - %s: %sh%sm" % (project, min/60, min - 60 * (min/60))
+    for project, min in list(summary.items()):
+        print("  - %s: %sh%sm" % (project, min/60, min - 60 * (min/60)))
 
 @cmdapp.cmd
 def start(project):
@@ -71,8 +71,8 @@ def start(project):
     start = datetime.datetime.now()
     logs.append({'project': project, 'start': start})
     save(logs)
-    print "starting work on %s" % project
-    print "  at %s" % start.strftime(time_format)
+    print("starting work on %s" % project)
+    print("  at %s" % start.strftime(time_format))
 
 @cmdapp.cmd
 def stop():
@@ -80,16 +80,16 @@ def stop():
     
     logs = read()
     if not logs:
-        print "error: no active project"
+        print("error: no active project")
     else:
         last = logs[-1]
         project = last['project']
         start = last.get('start')
         end = datetime.datetime.now()
-        print "worked on %s" % project
-        print "  from    %s" % start.strftime(time_format)
-        print "  to now, %s" % end.strftime(time_format)
-        print "       => %s elapsed" % elapsed_time(start)
+        print("worked on %s" % project)
+        print("  from    %s" % start.strftime(time_format))
+        print("  to now, %s" % end.strftime(time_format))
+        print("       => %s elapsed" % elapsed_time(start))
         
         logs[-1]['end'] = end
         save(logs)
