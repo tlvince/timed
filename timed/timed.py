@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Copyright 2009 Adeel Ahmad Khan <adeel@adeel.ru>
+# Copyright 2011 Tom Vincent <http://www.tlvince.com/contact/>
 
 """A command-line time tracker."""
 
@@ -57,7 +59,8 @@ class Timed:
             summary[log['project']] += (end - start).seconds / 60
         
         for project, min in list(summary.items()):
-            print("  - %s: %sh%sm" % (project, min/60, min - 60 * (min/60)))
+            print("  - %s: %sh%sm" % (project, int(min/60), 
+                int(min - 60 * int((min/60)))))
 
     def start(self, project):
         """Start tracking for <project>."""
@@ -93,8 +96,8 @@ class Timed:
         if not end:
             end = datetime.datetime.now()
         delta = (end - start).seconds
-        hour = delta / 3600
-        min = (delta - 3600 * hour) / 60
+        hour = int(delta / 3600)
+        min = int((delta - 3600 * hour) / 60)
         return '%sh%sm' % (hour, min)
 
     def read(self):
