@@ -7,7 +7,7 @@ import sys
 import os.path
 import argparse
 
-import timed.timed
+from timed.timed import Timed
 
 def buildArguments():
     """Return an argparse object with the known arguments."""
@@ -17,20 +17,20 @@ def buildArguments():
     subparser = parser.add_subparsers(title="sub-commands")
 
     status = subparser.add_parser("status", help="print current status")
-    status.set_defaults(func=timed.timed.status)
+    status.set_defaults(func=Timed.status)
     status.add_argument("-q", "--quiet", action="store_true",
         help="print only the current active project")
 
     start = subparser.add_parser("start", help="start tracking for [project]")
     start.add_argument("project", help="the project name")
-    start.set_defaults(func=timed.timed.start)
+    start.set_defaults(func=Timed.start)
 
     stop = subparser.add_parser("stop", help="stop tracking for the current project")
-    stop.set_defaults(func=timed.timed.stop)
+    stop.set_defaults(func=Timed.stop)
 
     summary = subparser.add_parser("summary",
         help="print a summary of hours for all projects")
-    summary.set_defaults(func=timed.timed.summary)
+    summary.set_defaults(func=Timed.summary)
 
     return parser
 
@@ -49,9 +49,15 @@ def parseArguments(parser):
 def main():
     """Start execution of timed."""
     log_file = os.path.expanduser('~/.timed')
+    time_format = "%H:%M on %d %b %Y"
+
     args = parseArguments(buildArguments())
+
     if not os.path.exists(log_file):
         open(log_file, 'w').close()  
+
+    timed = Timed(log_file, time_format)
+    args(timed)
 
 if __name__ == "__main__":
     main()
